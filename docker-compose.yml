@@ -118,6 +118,42 @@ services:
     depends_on:
       - elasticsearch
 
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./docker/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+      - ./docker/prometheus/prometheus.yml:/usr/share/prometheus/prometheus.yml
+    command:
+      - '--config.file=/usr/share/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./docker/grafana/config.ini:/etc/grafana/config.ini
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
+    depends_on:
+      - prometheus
+    ports:
+      - '3000:3000'
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./docker/alertmanager:/config"
+      - alertmanager-data:/data
+    command: --config.file=/config/alertmanager.yml --log.level=debug
+
   app:
     tty: true
     build:
@@ -129,6 +165,9 @@ services:
       - "8080:8080"
 
 
+
+
+
 networks:
   elk:
     driver: bridge
@@ -137,3 +176,6 @@ volumes:
   setup:
   elasticsearch:
   log-data:
+  prometheus_data:
+  grafana_data:
+  alertmanager-data:

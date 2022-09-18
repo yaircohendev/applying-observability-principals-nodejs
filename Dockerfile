@@ -4,6 +4,7 @@ COPY ["package.json", "tsconfig.json", "/app/"]
 COPY src /app/src
 WORKDIR /app
 
-RUN npm install && npm run build
+RUN npm install
+RUN npm run build
 
 CMD ["node", "dist/app.js"]

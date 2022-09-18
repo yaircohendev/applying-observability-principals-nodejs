@@ -17,5 +17,9 @@ export const saveInDB = async () => {
 };
 
 async function someAsyncOperation() {
-    return Promise.resolve();
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve('success');
+        }, (Math.random() * 3 + 1) * 1000)
+    })
 }
