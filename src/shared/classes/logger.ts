@@ -19,7 +19,7 @@ const streams = [
 
 
 export const logger = pino({
-    name: 'ws-logs2metrics',
+    name: 'stockly',
     customLevels: bunyanLevels,
     formatters: {
         level: (label: string): Object => {

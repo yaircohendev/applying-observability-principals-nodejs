@@ -1,13 +1,15 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { logger } from './shared/classes/logger';
-import { ErrorHandler } from './shared/classes/error-handler';
-import { BaseError } from './shared/classes/base-error';
+import express, {NextFunction, Request, Response} from 'express';
+import {logger} from './shared/classes/logger';
+import {ErrorHandler} from './shared/classes/error-handler';
+import {BaseError} from './shared/classes/base-error';
 import ordersRoute from './api/orders.routes';
+import {expressPrometheus} from "./core/prometheus";
 
 const app = express();
 app.use(express.json());
 const port = process.env.PORT || 8080;
 const errorHandler = new ErrorHandler(logger);
+app.use(expressPrometheus);
 
 app.use('/orders', ordersRoute);
 
