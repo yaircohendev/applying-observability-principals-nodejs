@@ -1,0 +1,37 @@
+## Filebeat configuration
+## https://github.com/elastic/beats/blob/master/deploy/docker/filebeat.docker.yml
+#
+
+
+filebeat.inputs:
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/*.log
+      - /Users/yaircohen/Desktop/Code/applying-observability-principals-talk/test-filebeat/test.log
+    tail_files: true
+
+filebeat.autodiscover:
+  providers:
+    # The Docker autodiscover provider automatically retrieves logs from Docker
+    # containers as they start and stop.
+    - type: docker
+      hints.enabled: true
+
+processors:
+  - add_cloud_metadata: ~
+  - decode_json_fields:
+      fields: [ 'message' ]
+      target: json
+
+output.elasticsearch:
+  hosts: ['http://elasticsearch:9200']
+  username: elastic
+  password: ${ELASTIC_PASSWORD}
+
+## HTTP endpoint for health checking
+## https://www.elastic.co/guide/en/beats/filebeat/current/http-endpoint.html
+#
+
+http.enabled: true
+http.host: 0.0.0.0

@@ -1,2 +1,0 @@
-{"log.level":"INFO","@timestamp":"2022-09-19T17:15:19.570Z","process":{"pid":40753},"host":{"hostname":"yair.cohen-MacBookPro"},"log":{"logger":"stockly"},"ecs":{"version":"1.6.0"},"message":"Stockly logger started"}
-{"log.level":"INFO","@timestamp":"2022-09-19T17:15:19.691Z","process":{"pid":40753},"host":{"hostname":"yair.cohen-MacBookPro"},"log":{"logger":"stockly"},"ecs":{"version":"1.6.0"},"message":"Server is listening on port 8080!"}

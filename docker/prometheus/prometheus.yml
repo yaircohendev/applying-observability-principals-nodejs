@@ -1,0 +1,21 @@
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: [
+        'app:8080',
+      ]
+        labels:
+          service: 'app-exporter'
+          group: 'testing'
+          name: 'app-exporter'
+
+rule_files:
+  - "/etc/prometheus/alert.yml"
+
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets: [ 'alertmanager:9093' ]

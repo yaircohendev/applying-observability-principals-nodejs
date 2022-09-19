@@ -1,3 +1,4 @@
+import "./core/tracing";
 import express, {NextFunction, Request, Response} from 'express';
 import {logger} from './shared/classes/logger';
 import {ErrorHandler} from './shared/classes/error-handler';

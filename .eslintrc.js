@@ -15,7 +15,7 @@ module.exports = {
         'no-useless-constructor': 0,
         'new-cap': 0,
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': ['error'],
+        '@typescript-eslint/no-unused-vars': ['off'],
         camelcase: 0,
         '@typescript-eslint/naming-convention': [
             'error',

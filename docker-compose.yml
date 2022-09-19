@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-
   # The 'setup' service runs a one-off script which initializes the
   # 'logstash_internal' and 'kibana_system' users inside Elasticsearch with the
   # values of the passwords defined in the '.env' file.
@@ -27,6 +26,7 @@ services:
       - elasticsearch
 
   elasticsearch:
+    restart: always
     build:
       context: docker/elasticsearch
       args:
@@ -50,6 +50,7 @@ services:
       - elk
 
   logstash:
+    restart: always
     build:
       context: docker/logstash
       args:
@@ -71,6 +72,7 @@ services:
       - elasticsearch
 
   filebeat:
+    restart: always
     build:
       context: docker/extensions/filebeat
       args:
@@ -103,6 +105,7 @@ services:
       co.elastic.logs/json.expand_keys: true
 
   kibana:
+    restart: always
     build:
       context: docker/kibana
       args:
@@ -119,6 +122,7 @@ services:
       - elasticsearch
 
   prometheus:
+    restart: always
     image: prom/prometheus:latest
     volumes:
       - ./docker/prometheus:/etc/prometheus
@@ -131,6 +135,7 @@ services:
 
 
   grafana:
+    restart: always
     image: grafana/grafana:latest
     volumes:
       - grafana_data:/var/lib/grafana
@@ -146,7 +151,7 @@ services:
 
   alertmanager:
     image: prom/alertmanager:latest
-    restart: unless-stopped
+    restart: always
     ports:
       - "9093:9093"
     volumes:
@@ -154,24 +159,60 @@ services:
       - alertmanager-data:/data
     command: --config.file=/config/alertmanager.yml --log.level=debug
 
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.29
+    container_name: jaeger
+    restart: always
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16685:16685
+      - 16686:16686
+      - 14250:14250
+      - 14268:14268
+      - 14269:14269
+      - 9411:9411
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=changeme
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+
+
   app:
+    restart: always
     tty: true
+    environment:
+      POSTGRES_HOST: "db"
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - log-data:/app/logs
+      - .:/usr/app/
+      - /usr/app/node_modules
     ports:
       - "8080:8080"
-
-
-
+    depends_on:
+      - db
+    links:
+      - db
 
 
 networks:
   elk:
     driver: bridge
-
 volumes:
   setup:
   elasticsearch:
@@ -179,3 +220,4 @@ volumes:
   prometheus_data:
   grafana_data:
   alertmanager-data:
+  db:

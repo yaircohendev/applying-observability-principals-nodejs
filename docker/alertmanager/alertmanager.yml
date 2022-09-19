@@ -1,0 +1,17 @@
+route:
+  receiver: 'mail'
+  repeat_interval: 4h
+  group_by: [ alertname ]
+
+
+receivers:
+  - name: 'mail'
+    email_configs:
+      - smarthost: 'smtp.gmail.com:465'
+        send_resolved: true
+        auth_username: 'applyingobsprincipals@gmail.com'
+        auth_identity: 'applyingobsprincipals@gmail.com'
+        auth_password: "qgtwhfqolrghcehy"
+        from: 'applyingobsprincipals@gmail.com'
+        to: 'applyingobsprincipals@gmail.com'
+        require_tls: false

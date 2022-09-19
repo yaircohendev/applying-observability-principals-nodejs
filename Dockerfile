@@ -1,10 +1,12 @@
-FROM node:16-alpine
+FROM node:18-alpine
 
-COPY ["package.json", "tsconfig.json", "/app/"]
-COPY src /app/src
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm i --omit=dev
+RUN mkdir -p /app && cp -a /tmp/node_modules /app/
+
 WORKDIR /app
+COPY . /app
 
-RUN npm install
 RUN npm run build
 
 CMD ["node", "dist/app.js"]
